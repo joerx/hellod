@@ -1,6 +1,6 @@
 IMAGE_NAME ?= $(shell git remote get-url origin | cut -d':' -f2 | sed 's/.git//')
 VERSION ?= $(shell git rev-parse --short HEAD)
-DOCKER_HOST ?= quay.io
+DOCKER_HOST ?= ghcr.io/joerx
 
 DOCKER_TAG := $(DOCKER_HOST)/$(IMAGE_NAME):$(VERSION)
 
