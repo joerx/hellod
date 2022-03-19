@@ -10,7 +10,8 @@ import (
 )
 
 type messageResponse struct {
-	Message string `json:"message"`
+	Message  string `json:"message"`
+	Hostname string `json:"hostname"`
 }
 
 type errorResponse struct {
@@ -55,7 +56,16 @@ func main() {
 
 func handleHello(w http.ResponseWriter, req *http.Request) {
 	log.Printf("%s %s - %s", req.Method, req.RemoteAddr, req.URL.Path)
-	respondOK(w, messageResponse{Message: "Hello World!"})
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	respondOK(w, messageResponse{
+		Message:  "Hello World!",
+		Hostname: hostname,
+	})
 }
 
 func respond(w http.ResponseWriter, code int, payload interface{}) {
