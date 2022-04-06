@@ -1,4 +1,4 @@
-FROM golang:1.16.15-alpine3.15 AS builder
+FROM golang:1.17-alpine3.15 AS builder
 
 ADD ./ /go/src/github.com/joerx/hellod
 WORKDIR /go/src/github.com/joerx/hellod

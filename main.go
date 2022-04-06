@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,21 +15,28 @@ type messageResponse struct {
 	Hostname string `json:"hostname"`
 }
 
+type healthCheckResponse struct {
+	Status  string `json:"status"`
+	Counter int    `json:"counter"`
+}
+
 type errorResponse struct {
 	Error string `json:"error"`
 }
 
-type counterResponse struct {
-	Count int `json:"count"`
-}
-
 func main() {
+	unhealthyFlag := flag.Bool("unhealthy", false, "Make server respond 500 on health check handler")
+	flag.Parse()
+
+	log.Printf("Healthy: %t", !*unhealthyFlag)
+
 	addr, ok := os.LookupEnv("ADDRESS")
 	if !ok {
 		addr = "localhost:8080"
 	}
 
 	http.HandleFunc("/", handleHello)
+	http.HandleFunc("/health", handleHealth(*unhealthyFlag))
 
 	waitChan := make(chan struct{})
 	sigChan := make(chan os.Signal)
@@ -68,6 +76,22 @@ func handleHello(w http.ResponseWriter, req *http.Request) {
 	})
 }
 
+func handleHealth(unhealthy bool) http.HandlerFunc {
+	counter := 0
+
+	return func(w http.ResponseWriter, req *http.Request) {
+		counter++
+		if unhealthy && counter > 5 {
+			respondInternalServerError(w, fmt.Errorf("the server made a boo boo"))
+		} else {
+			respondOK(w, healthCheckResponse{
+				Status:  "OK",
+				Counter: counter,
+			})
+		}
+	}
+}
+
 func respond(w http.ResponseWriter, code int, payload interface{}) {
 	bytes, _ := json.Marshal(payload)
 	w.WriteHeader(code)
@@ -81,8 +105,4 @@ func respondOK(w http.ResponseWriter, payload interface{}) {
 
 func respondInternalServerError(w http.ResponseWriter, err error) {
 	respond(w, http.StatusInternalServerError, errorResponse{Error: fmt.Sprintf("%s", err)})
-}
-
-func respondNotFound(w http.ResponseWriter) {
-	respond(w, http.StatusNotFound, errorResponse{Error: "Not Found"})
 }

@@ -2,7 +2,13 @@
 
 Hello World web server. For testing random shit.
 
-## Building
+## Building && Running
+
+```
+make && out/hellod
+```
+
+## Docker
 
 Docker login:
 
@@ -10,8 +16,8 @@ Docker login:
 echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 ```
 
-Build and publish:
+Docker build and publish:
 
 ```sh
-make push
+make docker-push
 ```

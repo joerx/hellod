@@ -4,10 +4,18 @@ DOCKER_HOST ?= ghcr.io/joerx
 
 DOCKER_TAG := $(DOCKER_HOST)/$(IMAGE_NAME):$(VERSION)
 
+default: clean build
+
 build:
+	go build -o out/hellod .
+
+clean:
+	rm -rf out
+
+docker-build:
 	docker build -t $(DOCKER_TAG) .
 
-push:
+docker-push: docker-build
 	docker push $(DOCKER_TAG)
 
-.PHONY: build push
+.PHONY: build push docker-build docker-push default
