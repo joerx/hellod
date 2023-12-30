@@ -34,7 +34,7 @@ func parseFlags() hellod.Flags {
 	flags := hellod.Flags{}
 
 	flag.BoolVar(&flags.Unhealthy, "unhealthy", false, "Make server respond 500 on health check handler")
-	flag.StringVar(&flags.Address, "address", "localhost:8080", "Address to listen on")
+	flag.StringVar(&flags.Address, "address", ":8080", "Address to listen on")
 	flag.StringVar(&flags.Message, "message", "Hello World!", "Greeting message to print")
 	flag.Parse()
 
