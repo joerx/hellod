@@ -9,9 +9,18 @@ import (
 	"github.com/joerx/hellod/hellod/response"
 )
 
+type messageResponseRequest struct {
+	Method string `json:"method"`
+	Path   string `json:"path"`
+	Proto  string `json:"proto"`
+	Host   string `json:"host"`
+	Scheme string `json:"scheme"`
+}
+
 type messageResponse struct {
-	Message  string `json:"message"`
-	Hostname string `json:"hostname"`
+	Message  string                 `json:"message"`
+	Hostname string                 `json:"hostname"`
+	Request  messageResponseRequest `json:"request"`
 }
 
 type healthCheckResponse struct {
@@ -31,6 +40,12 @@ func Hello(msg string) http.HandlerFunc {
 		response.OK(w, messageResponse{
 			Message:  msg,
 			Hostname: hostname,
+			Request: messageResponseRequest{
+				Method: req.Method,
+				Path:   req.URL.Path,
+				Host:   req.URL.Host,
+				Scheme: req.URL.Scheme,
+			},
 		})
 	}
 }
