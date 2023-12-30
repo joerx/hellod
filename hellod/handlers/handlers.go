@@ -19,18 +19,20 @@ type healthCheckResponse struct {
 	Counter int    `json:"counter"`
 }
 
-func Hello(w http.ResponseWriter, req *http.Request) {
-	log.Printf("%s %s - %s", req.Method, req.RemoteAddr, req.URL.Path)
+func Hello(msg string) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		log.Printf("%s %s - %s", req.Method, req.RemoteAddr, req.URL.Path)
 
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Fatal(err)
+		hostname, err := os.Hostname()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		response.OK(w, messageResponse{
+			Message:  msg,
+			Hostname: hostname,
+		})
 	}
-
-	response.OK(w, messageResponse{
-		Message:  "Hello World!",
-		Hostname: hostname,
-	})
 }
 
 func Health(unhealthy bool) http.HandlerFunc {
