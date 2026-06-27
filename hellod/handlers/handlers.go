@@ -31,6 +31,11 @@ type healthCheckResponse struct {
 func Hello(msg string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		log.Printf("%s %s - %s", req.Method, req.RemoteAddr, req.URL.Path)
+		for name, values := range req.Header {
+			for _, value := range values {
+				log.Printf("  %s: %s", name, value)
+			}
+		}
 
 		hostname, err := os.Hostname()
 		if err != nil {
