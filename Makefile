@@ -13,7 +13,7 @@ clean:
 	rm -rf out
 
 docker-build:
-	docker build -t $(DOCKER_REPO):$(VERSION)-arm64 --build-arg ARCH=arm64 .
+	docker build -t $(DOCKER_REPO):$(VERSION)-arm64 .
 
 docker-push: docker-build
 	docker push $(DOCKER_REPO):$(VERSION)-arm64
